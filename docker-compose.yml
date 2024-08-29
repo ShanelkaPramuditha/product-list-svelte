@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  client:
+    image: ghcr.io/shanelkapramuditha/product-list-svelte:setup-ci-cd
+    container_name: product-list
+    restart: unless-stopped
+    ports:
+      - '4175:3000'
+    volumes:
+      - product-list:/path/inside/container
+
+volumes:
+  product-list:
+    name: product-list
+    driver: local
