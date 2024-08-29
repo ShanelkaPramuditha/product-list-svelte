@@ -1,21 +1,27 @@
-FROM node:18-alpine as builder
+FROM node:18.18.0-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json .
+COPY pnpm-lock.yaml .
 
-RUN npm install -g pnpm
-
+RUN npm i -g pnpm
 RUN pnpm install
 
 COPY . .
 
 RUN pnpm run build
+RUN pnpm prune --prod
 
-FROM node:18-alpine
+FROM node:18.8.0-alpine AS deployer
 
 WORKDIR /app
 
-COPY --from=builder /app/dist .
+COPY --from=builder /app/build build/
+COPY --from=builder /app/package.json .
 
-CMD ["node", "index.js"]
+EXPOSE 3000
+
+# ENV NODE_ENV=production
+
+CMD [ "node", "build" ]
