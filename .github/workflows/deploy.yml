@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - setup/ci-cd
   workflow_dispatch:
 
 env:
