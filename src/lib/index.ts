@@ -1,1 +1,3 @@
-// place files you want to import through the `$lib` alias in this folder.
+import { fetchProducts } from '$lib/api/products';
+
+export { fetchProducts };
