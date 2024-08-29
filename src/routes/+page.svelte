@@ -2,13 +2,17 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import ProductCard from '$lib/components/Cards/ProductCard.svelte';
+	import SkeletonCard from '$lib/components/Loaders/SkeletonCard.svelte';
 	import { fetchProducts } from '$lib';
 	import type { IProduct } from '$lib/types';
 	import { createQuery, QueryClient } from '@tanstack/svelte-query';
+	import PaginationButtons from '$lib/components/Buttons/PaginationButtons.svelte';
 
 	let products: IProduct[] = [];
+	let isLoading = true;
 	let limit = 10;
 	let currentPage = 1;
+	let total = 0;
 	let select = [
 		'availabilityStatus',
 		'price',
@@ -40,6 +44,8 @@
 		staleTime: 5 * 60 * 1000 // 5 minutes
 	});
 
+	$: isLoading = $productsQuery.isLoading;
+
 	// Update products when query data changes
 	$: products = $productsQuery.data?.products || [];
 	$: total = $productsQuery.data?.total || 0;
@@ -54,32 +60,11 @@
 		queryClient.invalidateQueries({ queryKey: ['products', currentPage] });
 	});
 
-	// Function to handle page changes
 	const handlePageChange = (newPage: number) => {
 		if (newPage < 1) return;
 		currentPage = newPage;
 		goto(`?page=${currentPage}`);
 		queryClient.invalidateQueries({ queryKey: ['products', currentPage] });
-	};
-
-	const handleNextPage = () => {
-		handlePageChange(currentPage + 1);
-	};
-
-	const handlePrevPage = () => {
-		if (currentPage > 1) {
-			handlePageChange(currentPage - 1);
-		}
-	};
-
-	const handlePageInputChange = (e: Event) => {
-		const input = e.target as HTMLInputElement | null;
-		if (input) {
-			const newPage = parseInt(input.value, 10);
-			if (!isNaN(newPage)) {
-				handlePageChange(newPage);
-			}
-		}
 	};
 
 	// Cleanup
@@ -89,38 +74,21 @@
 </script>
 
 <div class="p-3">
-	<div class="grid grid-cols-5 gap-4">
-		{#each products as product}
-			<ProductCard {product} />
-		{/each}
+	<div
+		class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-items-center"
+	>
+		{#if isLoading}
+			{#each Array(limit) as _, i}
+				<SkeletonCard />
+			{/each}
+		{:else}
+			{#each products as product}
+				<ProductCard {product} />
+			{/each}
+		{/if}
 	</div>
 
-	<!-- Pagination Buttons -->
-	<div class="flex justify-center space-x-2 mt-4">
-		<button
-			class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center transition-colors duration-300"
-			on:click={handlePrevPage}
-			disabled={currentPage === 1}
-		>
-			Previous
-		</button>
-
-		<div class="flex items-center space-x-2">
-			<span class="text-gray-700">Page</span>
-			<input
-				class="text-center w-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
-				type="number"
-				min="1"
-				value={currentPage}
-				on:input={handlePageInputChange}
-			/>
-			of <span class="text-gray-700">{Math.ceil(total / limit)}</span>
-		</div>
-		<button
-			class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center transition-colors duration-300"
-			on:click={handleNextPage}
-		>
-			Next
-		</button>
-	</div>
+	{#if total > limit}
+		<PaginationButtons {currentPage} {total} {limit} onPageChange={handlePageChange} />
+	{/if}
 </div>

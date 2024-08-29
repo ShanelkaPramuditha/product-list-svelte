@@ -19,6 +19,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Store</title>
+</svelte:head>
+
 <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
 	<main>
 		<slot />
