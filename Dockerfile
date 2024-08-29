@@ -17,7 +17,7 @@ FROM node:18.8.0-alpine AS deployer
 
 WORKDIR /app
 
-COPY --from=builder /app/.svelte-kit build/
+COPY --from=builder /app build/
 COPY --from=builder /app/package.json .
 
 EXPOSE 3000
