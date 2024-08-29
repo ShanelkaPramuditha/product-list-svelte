@@ -6,7 +6,7 @@ COPY package*.json .
 COPY pnpm-lock.yaml .
 
 RUN npm i -g pnpm
-RUN pnpm install
+RUN pnpm install --frozen-lockfile --prod
 
 COPY . .
 
@@ -19,7 +19,6 @@ WORKDIR /app
 
 COPY --from=builder /app/build build/
 COPY --from=builder /app/package.json .
-RUN pnpm install --frozen-lockfile --prod
 
 EXPOSE 3000
 
