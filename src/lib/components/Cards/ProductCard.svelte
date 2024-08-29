@@ -15,14 +15,14 @@
 </script>
 
 <div
-	class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
+	class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
 >
-	<a href="#" target="_blank">
+	<a href={`/product/${product.id}`} target="_blank">
 		<img src={product.thumbnail} alt={product.title} class="p-4 rounded-t-lg" />
 	</a>
 
 	<div class="px-5 pb-5">
-		<a href="#">
+		<a href={`/product/${product.id}`} target="_blank">
 			<h5 class="text-xl font-semibold tracking-tight text-gray-900 line-clamp-1">
 				{product.title}
 			</h5>
