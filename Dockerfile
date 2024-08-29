@@ -1,27 +1,23 @@
-FROM node:18.18.0-alpine AS builder
+# Use this image as the platform to build the app
+FROM node:20.11-alpine AS external-website
 
+# The WORKDIR instruction sets the working directory for everything that will happen next
 WORKDIR /app
 
-COPY package*.json .
-COPY pnpm-lock.yaml .
-
-RUN npm i -g pnpm
-RUN pnpm install
-
+# Copy all local files into the image
 COPY . .
 
-RUN pnpm run build
-RUN pnpm prune --prod
+# Clean install all node modules
+RUN npm ci
 
-FROM node:18.8.0-alpine AS deployer
+# Build SvelteKit app
+RUN npm run build
 
-WORKDIR /app
+# Delete source code files that were used to build the app that are no longer needed
+RUN rm -rf src/ static/
 
-COPY --from=builder /app build/
-COPY --from=builder /app/package.json .
+# The USER instruction sets the user name to use as the default user for the remainder of the current stage
+USER node:node
 
-EXPOSE 3000
-
-# ENV NODE_ENV=production
-
-CMD [ "node", "build" ]
+# This is the command that will be run inside the image when you tell Docker to start the container
+CMD ["node","build/index.js"]
