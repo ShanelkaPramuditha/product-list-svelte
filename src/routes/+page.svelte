@@ -7,6 +7,8 @@
 	import type { IProduct, IProductCategory } from '$lib/types';
 	import { createQuery, QueryClient } from '@tanstack/svelte-query';
 	import PaginationButtons from '$lib/components/Buttons/PaginationButtons.svelte';
+	import { searchQuery } from '$lib/stores/filters';
+	import FilterBar from '$lib/components/FilterBar/FilterBar.svelte';
 
 	let products: IProduct[] = [];
 	let isLoading = true;
@@ -34,13 +36,25 @@
 	let selectedCategory: string = '';
 	let minPrice: number | undefined = undefined;
 	let maxPrice: number | undefined = undefined;
+	let sort: string = 'default';
 	let categories: IProductCategory[] = [];
 
 	const queryClient = new QueryClient();
 
 	// Function to fetch products
 	const fetchProductsQueryFn = async () => {
-		return fetchProducts(currentPage, limit, select, selectedCategory, minPrice, maxPrice);
+		const [sortField, sortOrder] = sort.split(',');
+		return fetchProducts(
+			currentPage,
+			limit,
+			select,
+			selectedCategory,
+			minPrice,
+			maxPrice,
+			$searchQuery,
+			sortField,
+			sortOrder
+		);
 	};
 
 	// Function to fetch categories
@@ -50,7 +64,7 @@
 
 	// Update product when page number changes
 	$: productsQuery = createQuery({
-		queryKey: ['products', currentPage, selectedCategory, minPrice, maxPrice],
+		queryKey: ['products', currentPage, selectedCategory, minPrice, maxPrice, $searchQuery, sort],
 		queryFn: fetchProductsQueryFn,
 		staleTime: 5 * 60 * 1000 // 5 minutes
 	});
@@ -88,8 +102,11 @@
 	};
 
 	const applyFilters = () => {
+		currentPage = 1;
+		goto(`?page=${currentPage}`);
+
 		queryClient.invalidateQueries({
-			queryKey: ['products', currentPage, selectedCategory, minPrice, maxPrice]
+			queryKey: ['products', currentPage, selectedCategory, minPrice, maxPrice, $searchQuery]
 		});
 	};
 
@@ -100,26 +117,17 @@
 </script>
 
 <div class="p-3">
-	<!-- Filter -->
-	<div class="filter-container">
-		<label>
-			Category:
-			<select bind:value={selectedCategory}>
-				<option value="">All</option>
-				{#each categories as category}
-					<option value={category.slug}>{category.name}</option>
-				{/each}
-			</select></label
-		>
+	<FilterBar
+		bind:selectedCategory
+		bind:minPrice
+		bind:maxPrice
+		bind:sort
+		{categories}
+		on:applyFilters={applyFilters}
+	/>
 
-		<label>
-			Price Range:
-			<input type="number" bind:value={minPrice} placeholder="Min Price" />
-			<input type="number" bind:value={maxPrice} placeholder="Max Price" />
-		</label>
-
-		<button on:click={applyFilters}>Apply Filters</button>
-	</div>
+	<!-- Headline name -->
+	<h1 class="text-2xl font-bold text-gray-800 my-5 ms-5">Products</h1>
 	<div
 		class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-items-center"
 	>
@@ -135,6 +143,8 @@
 	</div>
 
 	{#if total > limit}
-		<PaginationButtons {currentPage} {total} {limit} onPageChange={handlePageChange} />
+		<div class="mt-10">
+			<PaginationButtons {currentPage} {total} {limit} onPageChange={handlePageChange} />
+		</div>
 	{/if}
 </div>
