@@ -21,10 +21,7 @@ export async function fetchProducts(
 		select: select.join(',')
 	});
 
-	// 'https://dummyjson.com/products?sortBy=title&order=asc'
 	if (sortField && sortOrder) {
-		console.log('sortField', sortField);
-		console.log('sortOrder', sortOrder);
 		paginationParams.append('sortBy', sortField);
 		paginationParams.append('order', sortOrder);
 	}
@@ -49,7 +46,7 @@ export async function fetchProducts(
 
 	try {
 		const finalUrl = `${url}`;
-		console.log('finalUrl', finalUrl);
+
 		const res = await fetch(finalUrl);
 
 		if (!res.ok) {

@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import ProductCard from '$lib/components/Cards/ProductCard.svelte';
 	import { fetchProduct } from '$lib';
 	import type { IProduct } from '$lib/types';
 	import { createQuery, QueryClient } from '@tanstack/svelte-query';
-	import { page } from '$app/stores';
+	import { Image } from '@unpic/svelte';
+
+	export let data: { id: string };
+
+	const { id } = data;
 
 	let product: IProduct | null = null;
 
@@ -13,15 +14,15 @@
 
 	// Get the product id from the URL
 	let productId: string | undefined;
-	$: productId = $page.params.id;
+	productId = id;
 
 	// Function to fetch products
 	const fetchProductQueryFn = async () => {
 		return fetchProduct(productId);
 	};
 
-	const productQuery = createQuery({
-		queryKey: ['product'],
+	$: productQuery = createQuery({
+		queryKey: ['product', productId],
 		queryFn: fetchProductQueryFn,
 		staleTime: 5 * 60 * 1000 // 5 minutes
 	});
@@ -36,6 +37,14 @@
 		{#if product}
 			<div>
 				{product.title}
+				<Image
+					src={product.thumbnail}
+					layout="constrained"
+					width={800}
+					height={600}
+					alt={product.title}
+					placeholder="blur"
+				/>
 			</div>
 		{:else}
 			<p>Loading...</p>

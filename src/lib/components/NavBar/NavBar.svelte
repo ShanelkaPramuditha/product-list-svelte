@@ -1,19 +1,30 @@
 <script lang="ts">
-	import { searchQuery } from '$lib/stores/filters';
+	import { searchQuery } from '$lib/stores/searchStores';
 	import { page } from '$app/stores';
 	import { AiOutlineShoppingCart } from 'svelte-icons-pack/ai';
 	import { Icon } from 'svelte-icons-pack';
+	import { cartTotal } from '$lib/stores/cartStores';
+	import { onDestroy } from 'svelte';
 
-	let cartCount = 0;
+	let cartCount: number = 0;
+
+	const unsubscribe = cartTotal.subscribe((value) => {
+		cartCount = value;
+	});
+
+	onDestroy(() => {
+		unsubscribe();
+	});
 </script>
 
 <nav class="bg-white border-gray-200 border-b w-full sticky top-0 z-50">
+	<!-- Responsive for mobile -->
 	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 		<a href="/#top" class="flex items-center space-x-3 rtl:space-x-reverse">
 			<img src="/logo/logo.png" class="h-8" alt="Store Logo" />
 			<span class="self-center text-2xl font-semibold whitespace-nowrap">ShopiNest</span>
 		</a>
-		<div class="flex md:order-2">
+		<div class="flex md:order-2 xs:m-0 mt-3 justify-between w-full xs:w-auto">
 			<!-- Show only root path page -->
 			{#if $page.url.pathname === '/'}
 				<div class="relative md:block">
@@ -40,7 +51,7 @@
 						id="search-navbar"
 						bind:value={$searchQuery}
 						class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-						placeholder="Search..."
+						placeholder="Search Product..."
 					/>
 				</div>
 			{/if}

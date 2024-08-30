@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { browser } from '$app/environment';
-	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import { QueryClient } from '@tanstack/svelte-query';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client';
 	import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
