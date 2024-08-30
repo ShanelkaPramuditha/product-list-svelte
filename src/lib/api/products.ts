@@ -1,5 +1,5 @@
 import { PUBLIC_API_URL } from '$env/static/public';
-import type { IProduct, IProductCategory } from '$lib/types';
+import type { IProduct } from '$lib/types';
 
 // Fetch all products from the API
 export async function fetchProducts(
@@ -8,31 +8,49 @@ export async function fetchProducts(
 	select: string[],
 	category?: string,
 	minPrice?: number,
-	maxPrice?: number
+	maxPrice?: number,
+	searchQuery?: string,
+	sortField?: string,
+	sortOrder?: string
 ): Promise<{ products: IProduct[]; total: number }> {
 	const skip = (page - 1) * limit;
 
-	let url = PUBLIC_API_URL;
-
-	if (category) {
-		url = `${PUBLIC_API_URL}/category/${category}`;
-	}
-
-	console.log('url', url);
-
-	// Add optional parameters
 	const paginationParams = new URLSearchParams({
 		limit: limit.toString(),
-		skip: skip.toString()
-		// select: select.join(',')
+		skip: skip.toString(),
+		select: select.join(',')
 	});
 
-	console.log('params', paginationParams.toString());
+	// 'https://dummyjson.com/products?sortBy=title&order=asc'
+	if (sortField && sortOrder) {
+		console.log('sortField', sortField);
+		console.log('sortOrder', sortOrder);
+		paginationParams.append('sortBy', sortField);
+		paginationParams.append('order', sortOrder);
+	}
 
-	console.log(`${url}?${paginationParams.toString()}`);
+	if (minPrice !== undefined) {
+		paginationParams.append('minPrice', minPrice.toString());
+	}
+
+	if (maxPrice !== undefined) {
+		paginationParams.append('maxPrice', maxPrice.toString());
+	}
+
+	let url = `${PUBLIC_API_URL}?${paginationParams.toString()}`;
+
+	if (searchQuery) {
+		url = `${PUBLIC_API_URL}/search?q=${searchQuery}&${paginationParams.toString()}`;
+	}
+
+	if (category) {
+		url = `${PUBLIC_API_URL}/category/${category}?${paginationParams.toString()}`;
+	}
 
 	try {
-		const res = await fetch(`${url}?${paginationParams.toString()}`);
+		const finalUrl = `${url}`;
+		console.log('finalUrl', finalUrl);
+		const res = await fetch(finalUrl);
 
 		if (!res.ok) {
 			throw new Error('Network response was not ok');
@@ -60,22 +78,5 @@ export async function fetchProduct(id: string): Promise<IProduct | null> {
 	} catch (error) {
 		console.error('Error fetching product:', error);
 		return null;
-	}
-}
-
-// Get all categories from the API
-export async function fetchCategories(): Promise<{ categories: IProductCategory[] }> {
-	try {
-		const res = await fetch(`${PUBLIC_API_URL}/categories`);
-		if (!res.ok) {
-			throw new Error('Network response was not ok');
-		}
-		const data = await res.json();
-		return {
-			categories: data ?? []
-		};
-	} catch (error) {
-		console.error('Error fetching categories:', error);
-		return { categories: [] };
 	}
 }

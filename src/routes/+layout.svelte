@@ -5,6 +5,8 @@
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client';
 	import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+	import NavBar from '$lib/components/NavBar/NavBar.svelte';
+	import Footer from '$lib/components/Footer/Footer.svelte';
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -24,8 +26,12 @@
 </svelte:head>
 
 <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-	<main>
-		<slot />
+	<main class="flex flex-col min-h-screen">
+		<NavBar />
+		<div class="flex-grow">
+			<slot />
+		</div>
+		<Footer />
 	</main>
 	<SvelteQueryDevtools />
 </PersistQueryClientProvider>
