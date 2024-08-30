@@ -27,11 +27,13 @@ export async function fetchProducts(
 	}
 
 	if (minPrice !== undefined) {
-		paginationParams.append('minPrice', minPrice.toString());
+		console.log('minPrice', minPrice);
+		// paginationParams.append('minPrice', minPrice.toString());
 	}
 
 	if (maxPrice !== undefined) {
-		paginationParams.append('maxPrice', maxPrice.toString());
+		console.log('maxPrice', maxPrice);
+		// paginationParams.append('maxPrice', maxPrice.toString());
 	}
 
 	let url = `${PUBLIC_API_URL}?${paginationParams.toString()}`;

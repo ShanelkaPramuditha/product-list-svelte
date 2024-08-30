@@ -1,4 +1,8 @@
 export interface IProduct {
+	brand: string;
+	category: string;
+	price: number;
+	availabilityStatus: string;
 	id: number;
 	title: string;
 	description: string;

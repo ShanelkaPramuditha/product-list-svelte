@@ -16,7 +16,6 @@
 
 	const handleAddToCart = (item: ICartItems) => {
 		addToCart(item);
-		console.log('Added to cart', item);
 	};
 
 	const { fullStars, halfStar } = getStarRating(product.rating);
