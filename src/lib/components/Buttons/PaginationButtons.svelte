@@ -37,7 +37,9 @@
 
 <div class="flex justify-center space-x-2 mt-4">
 	<button
-		class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center transition-colors duration-300"
+		class={`text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center transition-colors duration-300 ${
+			currentPage === 1 ? 'cursor-not-allowed bg-gray-400 hover:bg-gray-400' : ''
+		}`}
 		on:click={handlePrevPage}
 		disabled={currentPage === 1}
 	>
@@ -58,8 +60,13 @@
 	</div>
 
 	<button
-		class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center transition-colors duration-300"
+		class={`text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center transition-colors duration-300 ${
+			currentPage === Math.ceil(total / limit)
+				? 'cursor-not-allowed bg-gray-400 hover:bg-gray-400'
+				: ''
+		}`}
 		on:click={handleNextPage}
+		disabled={currentPage === Math.ceil(total / limit)}
 	>
 		<Icon src={FaSolidArrowRightLong} size={20} />
 	</button>
