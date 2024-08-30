@@ -1,3 +1,3 @@
-import { fetchProducts, fetchProduct } from '$lib/api/products';
+import { fetchProducts, fetchProduct, fetchCategories } from '$lib/api/products';
 
-export { fetchProducts, fetchProduct };
+export { fetchProducts, fetchProduct, fetchCategories };

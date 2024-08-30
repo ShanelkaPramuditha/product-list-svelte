@@ -4,3 +4,9 @@ export interface IProduct {
 	description: string;
 	thumbnail: string;
 }
+
+export interface IProductCategory {
+	slug: string;
+	name: string;
+	url: string;
+}
