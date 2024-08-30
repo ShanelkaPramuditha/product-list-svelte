@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-	<title>Store</title>
+	<title>ShopiNest</title>
 </svelte:head>
 
 <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
