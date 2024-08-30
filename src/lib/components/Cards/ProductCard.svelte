@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { BiCartAdd } from 'svelte-icons-pack/bi';
 	import IconButton from '$lib/components/Buttons/IconButton.svelte';
+	import { addToCart } from '$lib/stores/cartStores';
+	import { Image } from '@unpic/svelte';
+	import type { ICartItems } from '$lib/types';
 
 	export let product;
 
@@ -11,18 +14,30 @@
 		return { fullStars, halfStar };
 	};
 
+	const handleAddToCart = (item: ICartItems) => {
+		addToCart(item);
+	};
+
 	const { fullStars, halfStar } = getStarRating(product.rating);
 </script>
 
 <div
 	class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
 >
-	<a href={`/product/${product.id}`} target="_blank">
-		<img src={product.thumbnail} alt={product.title} class="p-4 rounded-t-lg" />
+	<a href={`/product/${product.id}`}>
+		<!-- <img src={product.thumbnail} alt={product.title} class="p-4 rounded-t-lg" /> -->
+		<Image
+			src={product.thumbnail}
+			layout="constrained"
+			width={800}
+			height={800}
+			alt={product.title}
+			loading="eager"
+		/>
 	</a>
 
 	<div class="px-5 pb-5">
-		<a href={`/product/${product.id}`} target="_blank">
+		<a href={`/product/${product.id}`}>
 			<h5 class="text-xl font-semibold tracking-tight text-gray-900 line-clamp-1">
 				{product.title}
 			</h5>
@@ -79,7 +94,7 @@
 		</div>
 		<div class="flex items-center justify-between">
 			<span class="text-xl font-bold text-gray-900">${product.price}</span>
-			<IconButton icon={BiCartAdd} />
+			<IconButton icon={BiCartAdd} onClick={() => handleAddToCart(product)} />
 		</div>
 	</div>
 </div>
