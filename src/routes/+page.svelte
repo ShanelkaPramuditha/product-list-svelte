@@ -7,7 +7,7 @@
 	import type { IProduct, IProductCategory } from '$lib/types';
 	import { createQuery, QueryClient } from '@tanstack/svelte-query';
 	import PaginationButtons from '$lib/components/Buttons/PaginationButtons.svelte';
-	import { searchQuery } from '$lib/stores/filters';
+	import { searchQuery } from '$lib/stores/searchStores';
 	import FilterBar from '$lib/components/FilterBar/FilterBar.svelte';
 
 	let products: IProduct[] = [];

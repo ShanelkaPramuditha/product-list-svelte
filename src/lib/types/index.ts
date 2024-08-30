@@ -10,3 +10,7 @@ export interface IProductCategory {
 	name: string;
 	url: string;
 }
+
+export interface ICartItems {
+	id: number;
+}
