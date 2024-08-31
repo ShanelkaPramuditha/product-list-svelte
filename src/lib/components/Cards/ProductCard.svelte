@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { BiCartAdd } from 'svelte-icons-pack/bi';
 	import IconButton from '$lib/components/Buttons/IconButton.svelte';
-	import { addToCart } from '$lib/stores/cartStore';
+	import { addToCart, getCartItems } from '$lib/stores/cartStore';
 	import { Image } from '@unpic/svelte';
 	import type { ICartItems } from '$lib/types';
 
@@ -17,6 +17,10 @@
 	const handleAddToCart = (item: ICartItems) => {
 		addToCart(item);
 	};
+
+	// If item is already in cart, disable the add to cart button
+	const cartItems = getCartItems();
+	$: isItemInCart = $cartItems.some((item) => item.id === product.id);
 
 	const { fullStars, halfStar } = getStarRating(product.rating);
 </script>
@@ -94,7 +98,7 @@
 		</div>
 		<div class="flex items-center justify-between">
 			<span class="text-xl font-bold text-gray-900">${product.price}</span>
-			<IconButton icon={BiCartAdd} onClick={() => handleAddToCart(product)} />
+			<IconButton icon={BiCartAdd} onClick={() => handleAddToCart(product)} {isItemInCart} />
 		</div>
 	</div>
 </div>

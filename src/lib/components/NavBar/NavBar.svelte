@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { AiOutlineShoppingCart } from 'svelte-icons-pack/ai';
 	import { Icon } from 'svelte-icons-pack';
-	import { cartTotal } from '$lib/stores/cartStore';
+	import { cartTotal, clearCart } from '$lib/stores/cartStore';
 	import { onDestroy } from 'svelte';
 
 	let cartCount: number = 0;
@@ -11,6 +11,11 @@
 	const unsubscribe = cartTotal.subscribe((value) => {
 		cartCount = value;
 	});
+
+	// Clear cart function
+	const handleClearCart = () => {
+		clearCart();
+	};
 
 	onDestroy(() => {
 		unsubscribe();
@@ -55,7 +60,7 @@
 					/>
 				</div>
 			{/if}
-			<div class="relative flex items-center ms-5">
+			<button class="relative flex items-center ms-5" on:click={handleClearCart}>
 				<Icon
 					src={AiOutlineShoppingCart}
 					className="text-gray-700 hover:text-blue-600 transition-colors duration-200 ease-in-out"
@@ -66,7 +71,7 @@
 				>
 					{cartCount}
 				</span>
-			</div>
+			</button>
 		</div>
 	</div>
 </nav>

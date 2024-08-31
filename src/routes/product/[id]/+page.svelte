@@ -3,7 +3,7 @@
 	import type { ICartItems, IProduct } from '$lib/types';
 	import { createQuery, QueryClient } from '@tanstack/svelte-query';
 	import { Image } from '@unpic/svelte';
-	import { addToCart } from '$lib/stores/cartStore';
+	import { addToCart, getCartItems } from '$lib/stores/cartStore';
 
 	export let data: { id: string };
 
@@ -29,6 +29,9 @@
 	});
 
 	$: product = $productQuery?.data ?? null;
+
+	const cartItems = getCartItems();
+	$: isItemInCart = $cartItems.some((item) => item.id === Number(productId));
 
 	const handleAddToCart = (item: ICartItems) => {
 		addToCart(item);
@@ -56,7 +59,10 @@
 						<div class="flex -mx-2 mb-4">
 							<div class="w-1/2 px-2">
 								<button
-									class="w-full bg-blue-700 text-white py-2 px-4 rounded-full font-bold hover:bg-blue-800"
+									disabled={isItemInCart}
+									class={`w-full bg-blue-700 text-white py-2 px-4 rounded-full font-bold hover:bg-blue-800 ${
+										isItemInCart ? 'cursor-not-allowed bg-blue-400 hover:bg-blue-400' : ''
+									}`}
 									on:click={() => handleAddToCart(product)}>Add to Cart</button
 								>
 							</div>

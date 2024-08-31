@@ -36,13 +36,16 @@ export async function fetchProducts(
 		// paginationParams.append('maxPrice', maxPrice.toString());
 	}
 
+	// Default URL with pagination params
 	let url = `${PUBLIC_API_URL}?${paginationParams.toString()}`;
 
-	if (searchQuery) {
+	// If search query is provided, update the URL
+	if (searchQuery && !category) {
 		url = `${PUBLIC_API_URL}/search?q=${searchQuery}&${paginationParams.toString()}`;
 	}
 
-	if (category) {
+	// If category is provided, update the URL
+	if (!searchQuery && category) {
 		url = `${PUBLIC_API_URL}/category/${category}?${paginationParams.toString()}`;
 	}
 

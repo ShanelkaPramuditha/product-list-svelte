@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { IProductCategory } from '$lib/types';
 	import { OiFilterRemove16 } from 'svelte-icons-pack/oi';
 	import { Icon } from 'svelte-icons-pack';
+	import { searchQuery } from '$lib/stores/filterStore';
 
 	export let selectedCategory: string = '';
 	export let minPrice: number | undefined = undefined;
@@ -10,11 +10,12 @@
 	export let categories: IProductCategory[] = [];
 	export let sort: string = 'default';
 
-	// Auto change page number to 1 when filter changes (goto(`?page=${currentPage}`);)
-	const dispatch = createEventDispatcher();
-
-	$: dispatch('filterChange', { selectedCategory, minPrice, maxPrice, sort });
-	// $: goto(`?page=${1}`);
+	$: isFilterOn =
+		selectedCategory !== '' ||
+		minPrice !== undefined ||
+		maxPrice !== undefined ||
+		sort !== 'default' ||
+		$searchQuery !== '';
 
 	// Clear filters
 	const clearFilters = () => {
@@ -22,7 +23,11 @@
 		minPrice = undefined;
 		maxPrice = undefined;
 		sort = 'default';
+		searchQuery.set('');
 	};
+
+	$: selectedCategory ? searchQuery.set('') : null;
+	$: $searchQuery ? (selectedCategory = '') : null;
 </script>
 
 <div class="filter-container p-4 rounded-lg flex flex-col sm:flex-row sm:items-end gap-4">
@@ -84,11 +89,15 @@
 
 	<div class="flex justify-center sm:justify-end w-full">
 		<button
+			disabled={!isFilterOn}
 			on:click={clearFilters}
-			class="flex items-center text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors duration-300"
+			class={`flex items-center text-white focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors duration-300` +
+				(!isFilterOn
+					? ' cursor-not-allowed bg-gray-400 hover:bg-gray-400'
+					: ' bg-gray-700 hover:bg-gray-800')}
 		>
 			<Icon src={OiFilterRemove16} size={16} className="mr-2" />
-			Clear All Filters
+			Clear Filters
 		</button>
 	</div>
 </div>

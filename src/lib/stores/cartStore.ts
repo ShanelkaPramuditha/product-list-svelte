@@ -23,6 +23,11 @@ export function removeFromCart(id: number) {
 	cartItems.update((items) => items.filter((item) => item.id !== id));
 }
 
+// Get cart items
+export function getCartItems() {
+	return cartItems;
+}
+
 // Function to clear all items from the cart
 export function clearCart() {
 	cartItems.set([]);
