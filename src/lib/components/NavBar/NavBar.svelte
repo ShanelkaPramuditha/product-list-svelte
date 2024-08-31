@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { searchQuery } from '$lib/stores/searchStores';
+	import { searchQuery } from '$lib/stores/filterStore';
 	import { page } from '$app/stores';
 	import { AiOutlineShoppingCart } from 'svelte-icons-pack/ai';
 	import { Icon } from 'svelte-icons-pack';
-	import { cartTotal } from '$lib/stores/cartStores';
+	import { cartTotal } from '$lib/stores/cartStore';
 	import { onDestroy } from 'svelte';
 
 	let cartCount: number = 0;
