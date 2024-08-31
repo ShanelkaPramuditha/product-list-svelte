@@ -49,11 +49,11 @@
 			limit,
 			select,
 			selectedCategory,
-			minPrice,
-			maxPrice,
 			$searchQuery,
 			sortField,
-			sortOrder
+			sortOrder,
+			minPrice,
+			maxPrice
 		);
 	};
 

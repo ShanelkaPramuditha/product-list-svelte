@@ -28,6 +28,9 @@
 
 	$: selectedCategory ? searchQuery.set('') : null;
 	$: $searchQuery ? (selectedCategory = '') : null;
+	$: minPrice || maxPrice
+		? ((selectedCategory = ''), ($searchQuery = ''), (sort = 'default'))
+		: null;
 </script>
 
 <div class="filter-container p-4 rounded-lg flex flex-col sm:flex-row sm:items-end gap-4">

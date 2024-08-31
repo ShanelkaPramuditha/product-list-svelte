@@ -17,15 +17,19 @@
 		clearCart();
 	};
 
+	const handleClick = (event: MouseEvent) => {
+		event.preventDefault();
+		window.location.href = '/';
+	};
+
 	onDestroy(() => {
 		unsubscribe();
 	});
 </script>
 
 <nav class="bg-white border-gray-200 border-b w-full sticky top-0 z-50">
-	<!-- Responsive for mobile -->
 	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-		<a href="/#top" class="flex items-center space-x-3 rtl:space-x-reverse">
+		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse" on:click={handleClick}>
 			<img src="/logo/logo.png" class="h-8" alt="Store Logo" />
 			<span class="self-center text-2xl font-semibold whitespace-nowrap">ShopiNest</span>
 		</a>
