@@ -7,11 +7,11 @@ export async function fetchProducts(
 	limit: number,
 	select: string[],
 	category?: string,
-	minPrice?: number,
-	maxPrice?: number,
 	searchQuery?: string,
 	sortField?: string,
-	sortOrder?: string
+	sortOrder?: string,
+	minPrice?: number,
+	maxPrice?: number
 ): Promise<{ products: IProduct[]; total: number }> {
 	const skip = (page - 1) * limit;
 
@@ -26,24 +26,23 @@ export async function fetchProducts(
 		paginationParams.append('order', sortOrder);
 	}
 
-	if (minPrice !== undefined) {
-		console.log('minPrice', minPrice);
-		// paginationParams.append('minPrice', minPrice.toString());
-	}
-
-	if (maxPrice !== undefined) {
-		console.log('maxPrice', maxPrice);
-		// paginationParams.append('maxPrice', maxPrice.toString());
-	}
-
+	// Default URL with pagination params
 	let url = `${PUBLIC_API_URL}?${paginationParams.toString()}`;
 
-	if (searchQuery) {
+	// If search query is provided, update the URL
+	if (searchQuery && !category) {
 		url = `${PUBLIC_API_URL}/search?q=${searchQuery}&${paginationParams.toString()}`;
 	}
 
-	if (category) {
+	// If category is provided, update the URL
+	if (!searchQuery && category) {
 		url = `${PUBLIC_API_URL}/category/${category}?${paginationParams.toString()}`;
+	}
+
+	// If min price or max price is provided.
+	if (minPrice && maxPrice) {
+		console.log('minPrice:', minPrice, 'maxPrice:', maxPrice);
+		url = `${PUBLIC_API_URL}`;
 	}
 
 	try {
@@ -55,6 +54,18 @@ export async function fetchProducts(
 			throw new Error('Network response was not ok');
 		}
 		const data = await res.json();
+
+		// If min price or max price is provided, filter and return 10 products per page.
+		if (minPrice && maxPrice) {
+			const filteredProducts = data.products.filter(
+				(product: IProduct) => product.price >= minPrice && product.price <= maxPrice
+			);
+			return {
+				products: filteredProducts.slice(skip, skip + limit),
+				total: filteredProducts.length
+			};
+		}
+
 		return {
 			products: data.products ?? [],
 			total: data.total ?? 0

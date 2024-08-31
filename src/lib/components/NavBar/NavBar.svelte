@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { searchQuery } from '$lib/stores/searchStores';
+	import { searchQuery } from '$lib/stores/filterStore';
 	import { page } from '$app/stores';
 	import { AiOutlineShoppingCart } from 'svelte-icons-pack/ai';
 	import { Icon } from 'svelte-icons-pack';
-	import { cartTotal } from '$lib/stores/cartStores';
+	import { cartTotal, clearCart } from '$lib/stores/cartStore';
 	import { onDestroy } from 'svelte';
 
 	let cartCount: number = 0;
@@ -12,15 +12,24 @@
 		cartCount = value;
 	});
 
+	// Clear cart function
+	const handleClearCart = () => {
+		clearCart();
+	};
+
+	const handleClick = (event: MouseEvent) => {
+		event.preventDefault();
+		window.location.href = '/';
+	};
+
 	onDestroy(() => {
 		unsubscribe();
 	});
 </script>
 
 <nav class="bg-white border-gray-200 border-b w-full sticky top-0 z-50">
-	<!-- Responsive for mobile -->
 	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-		<a href="/#top" class="flex items-center space-x-3 rtl:space-x-reverse">
+		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse" on:click={handleClick}>
 			<img src="/logo/logo.png" class="h-8" alt="Store Logo" />
 			<span class="self-center text-2xl font-semibold whitespace-nowrap">ShopiNest</span>
 		</a>
@@ -55,7 +64,7 @@
 					/>
 				</div>
 			{/if}
-			<div class="relative flex items-center ms-5">
+			<button class="relative flex items-center ms-5" on:click={handleClearCart}>
 				<Icon
 					src={AiOutlineShoppingCart}
 					className="text-gray-700 hover:text-blue-600 transition-colors duration-200 ease-in-out"
@@ -66,7 +75,7 @@
 				>
 					{cartCount}
 				</span>
-			</div>
+			</button>
 		</div>
 	</div>
 </nav>

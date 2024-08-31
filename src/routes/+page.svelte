@@ -7,7 +7,7 @@
 	import type { IProduct, IProductCategory } from '$lib/types';
 	import { createQuery, QueryClient } from '@tanstack/svelte-query';
 	import PaginationButtons from '$lib/components/Buttons/PaginationButtons.svelte';
-	import { searchQuery } from '$lib/stores/searchStores';
+	import { searchQuery } from '$lib/stores/filterStore';
 	import FilterBar from '$lib/components/FilterBar/FilterBar.svelte';
 
 	let products: IProduct[] = [];
@@ -49,11 +49,11 @@
 			limit,
 			select,
 			selectedCategory,
-			minPrice,
-			maxPrice,
 			$searchQuery,
 			sortField,
-			sortOrder
+			sortOrder,
+			minPrice,
+			maxPrice
 		);
 	};
 
@@ -68,6 +68,17 @@
 		queryFn: fetchProductsQueryFn,
 		staleTime: 5 * 60 * 1000 // 5 minutes
 	});
+
+	$: if (
+		minPrice !== undefined ||
+		maxPrice !== undefined ||
+		selectedCategory !== '' ||
+		sort !== 'default' ||
+		$searchQuery !== ''
+	) {
+		currentPage = 1;
+		// goto(`?page=${currentPage}`);
+	}
 
 	// Get categories
 	const categoriesQuery = createQuery({
@@ -101,15 +112,6 @@
 		queryClient.invalidateQueries({ queryKey: ['products', currentPage] });
 	};
 
-	const applyFilters = () => {
-		currentPage = 1;
-		goto(`?page=${currentPage}`);
-
-		queryClient.invalidateQueries({
-			queryKey: ['products', currentPage, selectedCategory, minPrice, maxPrice, $searchQuery]
-		});
-	};
-
 	// Cleanup
 	onDestroy(() => {
 		queryClient.clear();
@@ -117,17 +119,10 @@
 </script>
 
 <div class="p-3">
-	<FilterBar
-		bind:selectedCategory
-		bind:minPrice
-		bind:maxPrice
-		bind:sort
-		{categories}
-		on:applyFilters={applyFilters}
-	/>
+	<FilterBar bind:selectedCategory bind:minPrice bind:maxPrice bind:sort {categories} />
 
 	<!-- Headline name -->
-	<h1 class="text-2xl font-bold text-gray-800 my-5 ms-5">Products</h1>
+	<h1 class="text-2xl font-bold text-gray-800 px-4 pb-4">Products ({total})</h1>
 	<div
 		class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-items-center"
 	>
