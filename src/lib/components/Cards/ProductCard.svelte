@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { BiCartAdd } from 'svelte-icons-pack/bi';
 	import IconButton from '$lib/components/Buttons/IconButton.svelte';
-	import { addToCart } from '$lib/stores/cartStores';
+	import { addToCart } from '$lib/stores/cartStore';
 	import { Image } from '@unpic/svelte';
 	import type { ICartItems } from '$lib/types';
 

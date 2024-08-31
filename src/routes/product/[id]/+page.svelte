@@ -3,7 +3,7 @@
 	import type { ICartItems, IProduct } from '$lib/types';
 	import { createQuery, QueryClient } from '@tanstack/svelte-query';
 	import { Image } from '@unpic/svelte';
-	import { addToCart } from '$lib/stores/cartStores';
+	import { addToCart } from '$lib/stores/cartStore';
 
 	export let data: { id: string };
 
