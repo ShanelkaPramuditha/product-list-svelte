@@ -41,7 +41,6 @@ export async function fetchProducts(
 
 	// If min price or max price is provided.
 	if (minPrice && maxPrice) {
-		console.log('minPrice:', minPrice, 'maxPrice:', maxPrice);
 		url = `${PUBLIC_API_URL}`;
 	}
 
